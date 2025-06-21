@@ -66,6 +66,7 @@ typedef enum {
 	GDEXTENSION_VARIANT_TYPE_VECTOR3,
 	GDEXTENSION_VARIANT_TYPE_VECTOR3I,
 	GDEXTENSION_VARIANT_TYPE_TRANSFORM2D,
+	GDEXTENSION_VARIANT_TYPE_TRANSFORM2DI,
 	GDEXTENSION_VARIANT_TYPE_VECTOR4,
 	GDEXTENSION_VARIANT_TYPE_VECTOR4I,
 	GDEXTENSION_VARIANT_TYPE_PLANE,
@@ -94,6 +95,7 @@ typedef enum {
 	GDEXTENSION_VARIANT_TYPE_PACKED_FLOAT64_ARRAY,
 	GDEXTENSION_VARIANT_TYPE_PACKED_STRING_ARRAY,
 	GDEXTENSION_VARIANT_TYPE_PACKED_VECTOR2_ARRAY,
+	GDEXTENSION_VARIANT_TYPE_PACKED_VECTOR2I_ARRAY,
 	GDEXTENSION_VARIANT_TYPE_PACKED_VECTOR3_ARRAY,
 	GDEXTENSION_VARIANT_TYPE_PACKED_COLOR_ARRAY,
 	GDEXTENSION_VARIANT_TYPE_PACKED_VECTOR4_ARRAY,
@@ -2252,6 +2254,32 @@ typedef GDExtensionTypePtr (*GDExtensionInterfacePackedVector2ArrayOperatorIndex
  * @return A const pointer to the requested Vector2.
  */
 typedef GDExtensionTypePtr (*GDExtensionInterfacePackedVector2ArrayOperatorIndexConst)(GDExtensionConstTypePtr p_self, GDExtensionInt p_index);
+
+/**
+ * @name packed_vector2i_array_operator_index
+ * @since 4.1
+ *
+ * Gets a pointer to a Vector2i in a PackedVector2iArray.
+ *
+ * @param p_self A pointer to a PackedVector2iArray object.
+ * @param p_index The index of the Vector2i to get.
+ *
+ * @return A pointer to the requested Vector2i.
+ */
+typedef GDExtensionTypePtr (*GDExtensionInterfacePackedVector2iArrayOperatorIndex)(GDExtensionTypePtr p_self, GDExtensionInt p_index);
+
+/**
+ * @name packed_vector2i_array_operator_index_const
+ * @since 4.1
+ *
+ * Gets a const pointer to a Vector2i in a PackedVector2Array.
+ *
+ * @param p_self A const pointer to a PackedVector2iArray object.
+ * @param p_index The index of the Vector2i to get.
+ *
+ * @return A const pointer to the requested Vector2i.
+ */
+typedef GDExtensionTypePtr (*GDExtensionInterfacePackedVector2iArrayOperatorIndexConst)(GDExtensionConstTypePtr p_self, GDExtensionInt p_index);
 
 /**
  * @name packed_vector3_array_operator_index

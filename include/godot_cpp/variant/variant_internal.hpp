@@ -87,6 +87,10 @@ struct VariantInternalType<Transform2D> {
 	static constexpr Variant::Type type = Variant::TRANSFORM2D;
 };
 template <>
+struct VariantInternalType<Transform2Di> {
+	static constexpr Variant::Type type = Variant::TRANSFORM2DI;
+};
+template <>
 struct VariantInternalType<Vector4> {
 	static constexpr Variant::Type type = Variant::VECTOR4;
 };
@@ -183,6 +187,10 @@ struct VariantInternalType<PackedVector2Array> {
 	static constexpr Variant::Type type = Variant::PACKED_VECTOR2_ARRAY;
 };
 template <>
+struct VariantInternalType<PackedVector2iArray> {
+	static constexpr Variant::Type type = Variant::PACKED_VECTOR2I_ARRAY;
+};
+template <>
 struct VariantInternalType<PackedVector3Array> {
 	static constexpr Variant::Type type = Variant::PACKED_VECTOR3_ARRAY;
 };
@@ -243,6 +251,8 @@ public:
 	_FORCE_INLINE_ static const Vector4i *get_vector4i(const Variant *v) { return get_internal_value<Vector4i>(v); }
 	_FORCE_INLINE_ static Transform2D *get_transform2d(Variant *v) { return get_internal_value<Transform2D>(v); }
 	_FORCE_INLINE_ static const Transform2D *get_transform2d(const Variant *v) { return get_internal_value<Transform2D>(v); }
+	_FORCE_INLINE_ static Transform2Di *get_transform2di(Variant *v) { return get_internal_value<Transform2Di>(v); }
+	_FORCE_INLINE_ static const Transform2Di *get_transform2di(const Variant *v) { return get_internal_value<Transform2Di>(v); }
 	_FORCE_INLINE_ static Plane *get_plane(Variant *v) { return get_internal_value<Plane>(v); }
 	_FORCE_INLINE_ static const Plane *get_plane(const Variant *v) { return get_internal_value<Plane>(v); }
 	_FORCE_INLINE_ static Quaternion *get_quaternion(Variant *v) { return get_internal_value<Quaternion>(v); }
@@ -289,6 +299,8 @@ public:
 	_FORCE_INLINE_ static const PackedStringArray *get_string_array(const Variant *v) { return get_internal_value<PackedStringArray>(v); }
 	_FORCE_INLINE_ static PackedVector2Array *get_vector2_array(Variant *v) { return get_internal_value<PackedVector2Array>(v); }
 	_FORCE_INLINE_ static const PackedVector2Array *get_vector2_array(const Variant *v) { return get_internal_value<PackedVector2Array>(v); }
+	_FORCE_INLINE_ static PackedVector2iArray *get_vector2i_array(Variant *v) { return get_internal_value<PackedVector2iArray>(v); }
+	_FORCE_INLINE_ static const PackedVector2iArray *get_vector2i_array(const Variant *v) { return get_internal_value<PackedVector2iArray>(v); }
 	_FORCE_INLINE_ static PackedVector3Array *get_vector3_array(Variant *v) { return get_internal_value<PackedVector3Array>(v); }
 	_FORCE_INLINE_ static const PackedVector3Array *get_vector3_array(const Variant *v) { return get_internal_value<PackedVector3Array>(v); }
 	_FORCE_INLINE_ static PackedColorArray *get_color_array(Variant *v) { return get_internal_value<PackedColorArray>(v); }
@@ -333,6 +345,8 @@ public:
 				return get_projection(v);
 			case Variant::TRANSFORM2D:
 				return get_transform2d(v);
+			case Variant::TRANSFORM2DI:
+				return get_transform2di(v);
 			case Variant::QUATERNION:
 				return get_quaternion(v);
 			case Variant::PLANE:
@@ -371,6 +385,8 @@ public:
 				return get_string_array(v);
 			case Variant::PACKED_VECTOR2_ARRAY:
 				return get_vector2_array(v);
+			case Variant::PACKED_VECTOR2I_ARRAY:
+				return get_vector2i_array(v);
 			case Variant::PACKED_VECTOR3_ARRAY:
 				return get_vector3_array(v);
 			case Variant::PACKED_COLOR_ARRAY:
@@ -419,6 +435,8 @@ public:
 				return get_projection(v);
 			case Variant::TRANSFORM2D:
 				return get_transform2d(v);
+			case Variant::TRANSFORM2DI:
+				return get_transform2di(v);
 			case Variant::QUATERNION:
 				return get_quaternion(v);
 			case Variant::PLANE:
@@ -457,6 +475,8 @@ public:
 				return get_string_array(v);
 			case Variant::PACKED_VECTOR2_ARRAY:
 				return get_vector2_array(v);
+			case Variant::PACKED_VECTOR2I_ARRAY:
+				return get_vector2i_array(v);
 			case Variant::PACKED_VECTOR3_ARRAY:
 				return get_vector3_array(v);
 			case Variant::PACKED_COLOR_ARRAY:

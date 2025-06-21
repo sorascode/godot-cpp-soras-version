@@ -553,6 +553,9 @@ def generate_builtin_class_header(builtin_api, size, used_classes, fully_used_cl
     if class_name == "PackedVector2Array":
         result.append("#include <godot_cpp/variant/vector2.hpp>")
         result.append("")
+    if class_name == "PackedVector2iArray":
+        result.append("#include <godot_cpp/variant/vector2i.hpp>")
+        result.append("")
     if class_name == "PackedVector3Array":
         result.append("#include <godot_cpp/variant/vector3.hpp>")
         result.append("")
@@ -2582,6 +2585,7 @@ def is_included_struct_type(type_name):
         "Rect2",
         "Rect2i",
         "Transform2D",
+        "Transform2Di",
         "Transform3D",
         "Vector2",
         "Vector2i",
@@ -2605,6 +2609,7 @@ def is_packed_array(type_name):
         "PackedInt64Array",
         "PackedStringArray",
         "PackedVector2Array",
+        "PackedVector2iArray",
         "PackedVector3Array",
         "PackedVector4Array",
     ]
@@ -2702,6 +2707,7 @@ def correct_default_value(value, type_name):
         "[]": "Array()",
         "{}": "Dictionary()",
         "Transform2D(1, 0, 0, 1, 0, 0)": "Transform2D()",  # Default transform.
+        "Transform2Di(1, 0, 0, 1, 0, 0)": "Transform2Di()",  # Default transform.
         "Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)": "Transform3D()",  # Default transform.
     }
     if value in value_map:

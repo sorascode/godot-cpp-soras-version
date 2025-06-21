@@ -42,6 +42,7 @@
 #include <godot_cpp/variant/packed_int64_array.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
+#include <godot_cpp/variant/packed_vector2i_array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_vector4_array.hpp>
 
@@ -179,6 +180,24 @@ const Vector2 *PackedVector2Array::ptr() const {
 
 Vector2 *PackedVector2Array::ptrw() {
 	return (Vector2 *)internal::gdextension_interface_packed_vector2_array_operator_index((GDExtensionTypePtr *)this, 0);
+}
+
+const Vector2i &PackedVector2iArray::operator[](int64_t p_index) const {
+	const Vector2i *vec = (const Vector2i *)internal::gdextension_interface_packed_vector2i_array_operator_index_const((GDExtensionTypePtr *)this, p_index);
+	return *vec;
+}
+
+Vector2i &PackedVector2iArray::operator[](int64_t p_index) {
+	Vector2i *vec = (Vector2i *)internal::gdextension_interface_packed_vector2i_array_operator_index((GDExtensionTypePtr *)this, p_index);
+	return *vec;
+}
+
+const Vector2i *PackedVector2iArray::ptr() const {
+	return (const Vector2i *)internal::gdextension_interface_packed_vector2i_array_operator_index_const((GDExtensionTypePtr *)this, 0);
+}
+
+Vector2i *PackedVector2iArray::ptrw() {
+	return (Vector2i *)internal::gdextension_interface_packed_vector2i_array_operator_index((GDExtensionTypePtr *)this, 0);
 }
 
 const Vector3 &PackedVector3Array::operator[](int64_t p_index) const {

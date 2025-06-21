@@ -35,6 +35,46 @@
 
 namespace godot {
 
+real_t Vector2i::angle() const {
+	return Math::atan2(y, x);
+}
+
+real_t Vector2i::angle_to_point(const Vector2i &p_vector2) const {
+	return (p_vector2 - *this).angle();
+}
+
+int32_t Vector2i::dot(const Vector2i &p_other) const {
+	return x * p_other.x + y * p_other.y;
+}
+
+int32_t Vector2i::cross(const Vector2i &p_other) const {
+	return x * p_other.y - y * p_other.x;
+}
+
+bool Vector2i::is_equal(const Vector2i &p_v) const {
+	return x == p_v.x && y == p_v.y;
+}
+
+bool Vector2i::is_zero() const {
+	return x == 0 && y == 0;
+}
+
+void Vector2i::normalize() {
+	int32_t l = x * x + y * y;
+	if (l != 0) {
+		l = Math::sqrt(l);
+		x /= l;
+		y /= l;
+	}
+}
+
+Vector2i Vector2i::normalized() const {
+	Vector2i v = *this;
+	v.normalize();
+	return v;
+}
+
+
 Vector2i Vector2i::snapped(const Vector2i &p_step) const {
 	return Vector2i(
 			Math::snapped(x, p_step.x),

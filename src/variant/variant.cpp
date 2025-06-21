@@ -67,6 +67,7 @@ void Variant::init_bindings() {
 	PackedFloat64Array::init_bindings();
 	PackedStringArray::init_bindings();
 	PackedVector2Array::init_bindings();
+	PackedVector2iArray::init_bindings();
 	PackedVector3Array::init_bindings();
 	PackedVector4Array::init_bindings();
 	PackedColorArray::init_bindings();
@@ -136,6 +137,10 @@ Variant::Variant(const Vector3i &v) {
 
 Variant::Variant(const Transform2D &v) {
 	from_type_constructor[TRANSFORM2D](_native_ptr(), (GDExtensionTypePtr)&v);
+}
+
+Variant::Variant(const Transform2Di &v) {
+	from_type_constructor[TRANSFORM2DI](_native_ptr(), (GDExtensionTypePtr)&v);
 }
 
 Variant::Variant(const Vector4 &v) {
@@ -241,6 +246,10 @@ Variant::Variant(const PackedStringArray &v) {
 
 Variant::Variant(const PackedVector2Array &v) {
 	from_type_constructor[PACKED_VECTOR2_ARRAY](_native_ptr(), v._native_ptr());
+}
+
+Variant::Variant(const PackedVector2iArray &v) {
+	from_type_constructor[PACKED_VECTOR2I_ARRAY](_native_ptr(), v._native_ptr());
 }
 
 Variant::Variant(const PackedVector3Array &v) {
@@ -358,6 +367,13 @@ Variant::operator Vector3i() const {
 Variant::operator Transform2D() const {
 	// @todo Avoid initializing result before calling constructor (which will initialize it again)
 	Transform2D result;
+	to_type_constructor[TRANSFORM2D]((GDExtensionTypePtr)&result, _native_ptr());
+	return result;
+}
+
+Variant::operator Transform2Di() const {
+	// @todo Avoid initializing result before calling constructor (which will initialize it again)
+	Transform2Di result;
 	to_type_constructor[TRANSFORM2D]((GDExtensionTypePtr)&result, _native_ptr());
 	return result;
 }
@@ -498,6 +514,10 @@ Variant::operator PackedStringArray() const {
 
 Variant::operator PackedVector2Array() const {
 	return PackedVector2Array(this);
+}
+
+Variant::operator PackedVector2iArray() const {
+	return PackedVector2iArray(this);
 }
 
 Variant::operator PackedVector3Array() const {
@@ -753,6 +773,7 @@ void Variant::clear() {
 		false, // VECTOR3,
 		false, // VECTOR3I,
 		true, // TRANSFORM2D,
+		true, // TRANSFORM2Di,
 		false, // VECTOR4,
 		false, // VECTOR4I,
 		false, // PLANE,
@@ -781,6 +802,7 @@ void Variant::clear() {
 		true, // PACKED_FLOAT64_ARRAY,
 		true, // PACKED_STRING_ARRAY,
 		true, // PACKED_VECTOR2_ARRAY,
+		true, // PACKED_VECTOR2I_ARRAY,
 		true, // PACKED_VECTOR3_ARRAY,
 		true, // PACKED_COLOR_ARRAY,
 	};

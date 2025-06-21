@@ -71,6 +71,7 @@ public:
 		VECTOR3,
 		VECTOR3I,
 		TRANSFORM2D,
+		TRANSFORM2DI,
 		VECTOR4,
 		VECTOR4I,
 		PLANE,
@@ -99,6 +100,7 @@ public:
 		PACKED_FLOAT64_ARRAY,
 		PACKED_STRING_ARRAY,
 		PACKED_VECTOR2_ARRAY,
+		PACKED_VECTOR2I_ARRAY,
 		PACKED_VECTOR3_ARRAY,
 		PACKED_COLOR_ARRAY,
 		PACKED_VECTOR4_ARRAY,
@@ -187,6 +189,7 @@ public:
 	Variant(const Vector3 &v);
 	Variant(const Vector3i &v);
 	Variant(const Transform2D &v);
+	Variant(const Transform2Di &v);
 	Variant(const Vector4 &v);
 	Variant(const Vector4i &v);
 	Variant(const Plane &v);
@@ -212,6 +215,7 @@ public:
 	Variant(const PackedFloat64Array &v);
 	Variant(const PackedStringArray &v);
 	Variant(const PackedVector2Array &v);
+	Variant(const PackedVector2iArray &v);
 	Variant(const PackedVector3Array &v);
 	Variant(const PackedColorArray &v);
 	Variant(const PackedVector4Array &v);
@@ -236,6 +240,7 @@ public:
 	operator Vector3() const;
 	operator Vector3i() const;
 	operator Transform2D() const;
+	operator Transform2Di() const;
 	operator Vector4() const;
 	operator Vector4i() const;
 	operator Plane() const;
@@ -261,6 +266,7 @@ public:
 	operator PackedFloat64Array() const;
 	operator PackedStringArray() const;
 	operator PackedVector2Array() const;
+	operator PackedVector2iArray() const;
 	operator PackedVector3Array() const;
 	operator PackedColorArray() const;
 	operator PackedVector4Array() const;

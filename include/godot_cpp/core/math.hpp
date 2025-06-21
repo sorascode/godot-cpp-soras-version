@@ -374,11 +374,17 @@ inline double atan2(double p_y, double p_x) {
 inline float atan2(float p_y, float p_x) {
 	return ::atan2f(p_y, p_x);
 }
+inline float atan2(int p_y, int p_x) {
+	return ::atan2f(p_y, p_x);
+}
 
 inline double sqrt(double p_x) {
 	return ::sqrt(p_x);
 }
 inline float sqrt(float p_x) {
+	return ::sqrtf(p_x);
+}
+inline float sqrt(int p_x) {
 	return ::sqrtf(p_x);
 }
 

@@ -95,6 +95,23 @@ struct [[nodiscard]] Vector2i {
 		return Vector2i(MAX(x, p_scalar), MAX(y, p_scalar));
 	}
 
+	int32_t dot(const Vector2i &p_other) const;
+	int32_t cross(const Vector2i &p_other) const;
+
+	Vector2i plane_project(real_t p_d, const Vector2i &p_vec) const;
+
+	_FORCE_INLINE_ Vector2i lerp(const Vector2i &p_to, real_t p_weight) const;
+
+	bool is_equal(const Vector2i &p_v) const;
+	bool is_zero() const;
+
+	void normalize();
+	Vector2i normalized() const;
+	real_t angle() const;
+	real_t angle_to_point(const Vector2i &p_vector2) const;
+	_FORCE_INLINE_ Vector2i direction_to(const Vector2i &p_to) const;
+
+
 	Vector2i operator+(const Vector2i &p_v) const;
 	void operator+=(const Vector2i &p_v);
 	Vector2i operator-(const Vector2i &p_v) const;
@@ -103,6 +120,7 @@ struct [[nodiscard]] Vector2i {
 
 	Vector2i operator*(const int32_t &rvalue) const;
 	void operator*=(const int32_t &rvalue);
+    void operator*=(const Vector2i &p_rvalue) { *this = *this * p_rvalue; }
 
 	Vector2i operator/(const Vector2i &p_v1) const;
 	Vector2i operator/(const int32_t &rvalue) const;
@@ -125,6 +143,11 @@ struct [[nodiscard]] Vector2i {
 	int64_t length_squared() const;
 	double length() const;
 
+	Vector2i orthogonal() const {
+		return Vector2i(y, -x);
+	}
+
+
 	int64_t distance_squared_to(const Vector2i &p_to) const;
 	double distance_to(const Vector2i &p_to) const;
 
@@ -146,6 +169,12 @@ struct [[nodiscard]] Vector2i {
 	}
 };
 
+Vector2i Vector2i::direction_to(const Vector2i &p_to) const {
+	Vector2i ret(p_to.x - x, p_to.y - y);
+	ret.normalize();
+	return ret;
+}
+
 // Multiplication operators required to workaround issues with LLVM using implicit conversion.
 
 _FORCE_INLINE_ Vector2i operator*(const int32_t p_scalar, const Vector2i &p_vector) {
@@ -162,6 +191,17 @@ _FORCE_INLINE_ Vector2i operator*(const float p_scalar, const Vector2i &p_vector
 
 _FORCE_INLINE_ Vector2i operator*(const double p_scalar, const Vector2i &p_vector) {
 	return p_vector * p_scalar;
+}
+
+_FORCE_INLINE_ Vector2i Vector2i::plane_project(real_t p_d, const Vector2i &p_vec) const {
+	return p_vec - *this * (dot(p_vec) - p_d);
+}
+
+Vector2i Vector2i::lerp(const Vector2i &p_to, real_t p_weight) const {
+	Vector2i res = *this;
+	res.x = Math::lerp(res.x, p_to.x, p_weight);
+	res.y = Math::lerp(res.y, p_to.y, p_weight);
+	return res;
 }
 
 typedef Vector2i Size2i;
