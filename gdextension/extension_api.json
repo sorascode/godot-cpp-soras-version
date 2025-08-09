@@ -66159,7 +66159,7 @@
 					"is_required": false,
 					"is_vararg": false,
 					"is_virtual": true,
-					"hash": 943178467,
+					"hash": 1785288718,
 					"arguments": [
 						{
 							"name": "move_dir",
@@ -66178,6 +66178,10 @@
 						{
 							"name": "collided_with",
 							"type": "RID"
+						},
+						{
+							"name": "contact_point",
+							"type": "Vector2i"
 						},
 						{
 							"name": "pusher",
@@ -66250,7 +66254,7 @@
 					"is_vararg": false,
 					"is_static": false,
 					"is_virtual": false,
-					"hash": 943178467,
+					"hash": 1785288718,
 					"arguments": [
 						{
 							"name": "move_dir",
@@ -66269,6 +66273,10 @@
 						{
 							"name": "collided_with",
 							"type": "RID"
+						},
+						{
+							"name": "contact_point",
+							"type": "Vector2i"
 						},
 						{
 							"name": "pusher",
@@ -70435,6 +70443,31 @@
 					}
 				},
 				{
+					"name": "set_pushable",
+					"is_const": false,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 2586408642,
+					"arguments": [
+						{
+							"name": "enabled",
+							"type": "bool"
+						}
+					]
+				},
+				{
+					"name": "is_pushable",
+					"is_const": true,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 36873697,
+					"return_value": {
+						"type": "bool"
+					}
+				},
+				{
 					"name": "create_shape_owner",
 					"is_const": false,
 					"is_vararg": false,
@@ -70783,6 +70816,12 @@
 					"name": "collidable",
 					"setter": "set_collidable",
 					"getter": "is_collidable"
+				},
+				{
+					"type": "bool",
+					"name": "pushable",
+					"setter": "set_pushable",
+					"getter": "is_pushable"
 				},
 				{
 					"type": "bool",
@@ -184266,7 +184305,7 @@
 					"is_vararg": false,
 					"is_static": false,
 					"is_virtual": false,
-					"hash": 763511431,
+					"hash": 1147966356,
 					"return_value": {
 						"type": "bool"
 					},
@@ -184290,6 +184329,11 @@
 							"type": "int",
 							"meta": "int16",
 							"default_value": "2"
+						},
+						{
+							"name": "only_pushable",
+							"type": "bool",
+							"default_value": "false"
 						}
 					]
 				}
@@ -190304,7 +190348,7 @@
 					"is_vararg": false,
 					"is_static": false,
 					"is_virtual": false,
-					"hash": 2881512554,
+					"hash": 2319564019,
 					"arguments": [
 						{
 							"name": "area",
@@ -190892,7 +190936,7 @@
 					"is_vararg": false,
 					"is_static": false,
 					"is_virtual": false,
-					"hash": 3181655360,
+					"hash": 1564354017,
 					"arguments": [
 						{
 							"name": "body",
@@ -192020,7 +192064,7 @@
 					"is_vararg": false,
 					"is_static": false,
 					"is_virtual": false,
-					"hash": 2249743668,
+					"hash": 3759095564,
 					"return_value": {
 						"type": "bool"
 					},
@@ -192047,6 +192091,11 @@
 							"type": "int",
 							"meta": "int16",
 							"default_value": "2"
+						},
+						{
+							"name": "only_pushable",
+							"type": "bool",
+							"default_value": "false"
 						}
 					]
 				},
@@ -194735,6 +194784,25 @@
 					]
 				},
 				{
+					"name": "_body_set_pushable",
+					"is_const": false,
+					"is_static": false,
+					"is_required": true,
+					"is_vararg": false,
+					"is_virtual": true,
+					"hash": 3893472511,
+					"arguments": [
+						{
+							"name": "body",
+							"type": "RID"
+						},
+						{
+							"name": "pushable",
+							"type": "bool"
+						}
+					]
+				},
+				{
 					"name": "_body_set_carry_speed_sync_callback",
 					"is_const": false,
 					"is_static": false,
@@ -195008,7 +195076,7 @@
 					"is_required": true,
 					"is_vararg": false,
 					"is_virtual": true,
-					"hash": 3126059645,
+					"hash": 2040658809,
 					"return_value": {
 						"type": "bool"
 					},
@@ -195033,6 +195101,10 @@
 							"name": "collision_type_filter",
 							"type": "int",
 							"meta": "int16"
+						},
+						{
+							"name": "only_pushable",
+							"type": "bool"
 						}
 					]
 				},
@@ -255025,6 +255097,36 @@
 					"hash": 3341600327,
 					"return_value": {
 						"type": "Vector2"
+					}
+				},
+				{
+					"name": "update_riders",
+					"is_const": false,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 3218959716
+				},
+				{
+					"name": "get_riders",
+					"is_const": true,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 2362200018,
+					"return_value": {
+						"type": "typedarray::PhysicsBody2D"
+					}
+				},
+				{
+					"name": "has_rider",
+					"is_const": true,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 36873697,
+					"return_value": {
+						"type": "bool"
 					}
 				}
 			],
