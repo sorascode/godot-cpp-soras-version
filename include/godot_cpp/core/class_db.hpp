@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef GODOT_CLASS_DB_HPP
-#define GODOT_CLASS_DB_HPP
+#pragma once
 
 #include <gdextension_interface.h>
 
@@ -45,20 +44,10 @@
 // Needs to come after method_bind and object have been included.
 #include <godot_cpp/variant/callable_method_pointer.hpp>
 
+#include <godot_cpp/templates/a_hash_map.hpp>
 #include <list>
 #include <mutex>
 #include <set>
-#include <string>
-#include <unordered_map>
-#include <vector>
-
-// Needed to use StringName as key in `std::unordered_map`
-template <>
-struct std::hash<godot::StringName> {
-	std::size_t operator()(godot::StringName const &s) const noexcept {
-		return s.hash();
-	}
-};
 
 namespace godot {
 
@@ -96,9 +85,9 @@ public:
 		StringName name;
 		StringName parent_name;
 		GDExtensionInitializationLevel level = GDEXTENSION_INITIALIZATION_SCENE;
-		std::unordered_map<StringName, MethodBind *> method_map;
+		AHashMap<StringName, MethodBind *> method_map;
 		std::set<StringName> signal_names;
-		std::unordered_map<StringName, VirtualMethod> virtual_methods;
+		AHashMap<StringName, VirtualMethod> virtual_methods;
 		std::set<StringName> property_names;
 		std::set<StringName> constant_names;
 		// Pointer to the parent custom class, if any. Will be null if the parent class is a Godot class.
@@ -107,11 +96,11 @@ public:
 
 private:
 	// This may only contain custom classes, not Godot classes
-	static std::unordered_map<StringName, ClassInfo> classes;
-	static std::unordered_map<StringName, const GDExtensionInstanceBindingCallbacks *> instance_binding_callbacks;
+	static HashMap<StringName, ClassInfo> classes;
+	static AHashMap<StringName, const GDExtensionInstanceBindingCallbacks *> instance_binding_callbacks;
 	// Used to remember the custom class registration order.
-	static std::vector<StringName> class_register_order;
-	static std::unordered_map<StringName, Object *> engine_singletons;
+	static LocalVector<StringName> class_register_order;
+	static AHashMap<StringName, Object *> engine_singletons;
 	static std::mutex engine_singletons_mutex;
 
 	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const MethodDefinition &method_name, const void **p_defs, int p_defcount);
@@ -168,11 +157,13 @@ public:
 		instance_binding_callbacks[p_name] = p_callbacks;
 	}
 
+	static void _editor_get_classes_used_callback(GDExtensionTypePtr p_packed_string_array);
+
 	static void _register_engine_singleton(const StringName &p_class_name, Object *p_singleton) {
 		std::lock_guard<std::mutex> lock(engine_singletons_mutex);
-		std::unordered_map<StringName, Object *>::const_iterator i = engine_singletons.find(p_class_name);
+		AHashMap<StringName, Object *>::ConstIterator i = engine_singletons.find(p_class_name);
 		if (i != engine_singletons.end()) {
-			ERR_FAIL_COND((*i).second != p_singleton);
+			ERR_FAIL_COND((*i).value != p_singleton);
 			return;
 		}
 		engine_singletons[p_class_name] = p_singleton;
@@ -190,7 +181,7 @@ public:
 	static MethodBind *bind_static_method(StringName p_class, N p_method_name, M p_method, VarArgs... p_args);
 
 	template <typename M>
-	static MethodBind *bind_vararg_method(uint32_t p_flags, StringName p_name, M p_method, const MethodInfo &p_info = MethodInfo(), const std::vector<Variant> &p_default_args = std::vector<Variant>{}, bool p_return_nil_is_variant = true);
+	static MethodBind *bind_vararg_method(uint32_t p_flags, StringName p_name, M p_method, const MethodInfo &p_info = MethodInfo(), const LocalVector<Variant> &p_default_args = LocalVector<Variant>{}, bool p_return_nil_is_variant = true);
 
 	static void add_property_group(const StringName &p_class, const String &p_name, const String &p_prefix);
 	static void add_property_subgroup(const StringName &p_class, const String &p_name, const String &p_prefix);
@@ -242,16 +233,16 @@ void ClassDB::_register_class(bool p_virtual, bool p_exposed, bool p_runtime) {
 	cl.name = T::get_class_static();
 	cl.parent_name = T::get_parent_class_static();
 	cl.level = current_level;
-	std::unordered_map<StringName, ClassInfo>::iterator parent_it = classes.find(cl.parent_name);
+	HashMap<StringName, ClassInfo>::Iterator parent_it = classes.find(cl.parent_name);
 	if (parent_it != classes.end()) {
 		// Assign parent if it is also a custom class
-		cl.parent_ptr = &parent_it->second;
+		cl.parent_ptr = &parent_it->value;
 	}
 	classes[cl.name] = cl;
 	class_register_order.push_back(cl.name);
 
 	// Register this class with Godot
-	GDExtensionClassCreationInfo4 class_info = {
+	GDExtensionClassCreationInfo5 class_info = {
 		p_virtual, // GDExtensionBool is_virtual;
 		is_abstract, // GDExtensionBool is_abstract;
 		p_exposed, // GDExtensionBool is_exposed;
@@ -277,7 +268,7 @@ void ClassDB::_register_class(bool p_virtual, bool p_exposed, bool p_runtime) {
 		(void *)&T::get_class_static(), // void *class_userdata;
 	};
 
-	internal::gdextension_interface_classdb_register_extension_class4(internal::library, cl.name._native_ptr(), cl.parent_name._native_ptr(), &class_info);
+	internal::gdextension_interface_classdb_register_extension_class5(internal::library, cl.name._native_ptr(), cl.parent_name._native_ptr(), &class_info);
 
 	// call bind_methods etc. to register all members of the class
 	T::initialize_class();
@@ -330,7 +321,7 @@ MethodBind *ClassDB::bind_static_method(StringName p_class, N p_method_name, M p
 }
 
 template <typename M>
-MethodBind *ClassDB::bind_vararg_method(uint32_t p_flags, StringName p_name, M p_method, const MethodInfo &p_info, const std::vector<Variant> &p_default_args, bool p_return_nil_is_variant) {
+MethodBind *ClassDB::bind_vararg_method(uint32_t p_flags, StringName p_name, M p_method, const MethodInfo &p_info, const LocalVector<Variant> &p_default_args, bool p_return_nil_is_variant) {
 	MethodBind *bind = create_vararg_method_bind(p_method, p_info, p_return_nil_is_variant);
 	ERR_FAIL_NULL_V(bind, nullptr);
 
@@ -339,13 +330,13 @@ MethodBind *ClassDB::bind_vararg_method(uint32_t p_flags, StringName p_name, M p
 
 	StringName instance_type = bind->get_instance_class();
 
-	std::unordered_map<StringName, ClassInfo>::iterator type_it = classes.find(instance_type);
+	HashMap<StringName, ClassInfo>::Iterator type_it = classes.find(instance_type);
 	if (type_it == classes.end()) {
 		memdelete(bind);
 		ERR_FAIL_V_MSG(nullptr, String("Class '{0}' doesn't exist.").format(Array::make(instance_type)));
 	}
 
-	ClassInfo &type = type_it->second;
+	ClassInfo &type = type_it->value;
 
 	if (type.method_map.find(p_name) != type.method_map.end()) {
 		memdelete(bind);
@@ -370,5 +361,3 @@ MethodBind *ClassDB::bind_vararg_method(uint32_t p_flags, StringName p_name, M p
 } // namespace godot
 
 CLASSDB_SINGLETON_VARIANT_CAST;
-
-#endif // GODOT_CLASS_DB_HPP

@@ -2,6 +2,8 @@ import os
 import platform
 import sys
 
+import header_builders
+from SCons import __version__ as scons_raw_version
 from SCons.Action import Action
 from SCons.Builder import Builder
 from SCons.Errors import UserError
@@ -13,12 +15,6 @@ from SCons.Variables.BoolVariable import _text2bool
 from binding_generator import _generate_bindings, _get_file_list, get_file_list
 from build_profile import generate_trimmed_api
 from doc_source_generator import scons_generate_doc_source
-
-
-def add_sources(sources, dir, extension):
-    for f in os.listdir(dir):
-        if f.endswith("." + extension):
-            sources.append(dir + "/" + f)
 
 
 def get_cmdline_bool(option, default):
@@ -33,7 +29,12 @@ def get_cmdline_bool(option, default):
 
 
 def normalize_path(val, env):
-    return val if os.path.isabs(val) else os.path.join(env.Dir("#").abspath, val)
+    """Normalize a path that was provided by the user on the command line
+    and is thus either an absolute path, or relative to the top level directory (#)
+    where the command was run.
+    """
+    # If val is an absolute path, it will not be joined.
+    return os.path.join(env.Dir("#").abspath, val)
 
 
 def validate_file(key, val, env):
@@ -53,9 +54,10 @@ def validate_parent_dir(key, val, env):
 
 def get_platform_tools_paths(env):
     path = env.get("custom_tools", None)
+    tools_path = env.Dir("tools").srcnode().abspath
     if path is None:
-        return ["tools"]
-    return [normalize_path(path, env), "tools"]
+        return [tools_path]
+    return [normalize_path(path, env), tools_path]
 
 
 def get_custom_platforms(env):
@@ -140,7 +142,12 @@ def scons_emit_files(target, source, env):
     env.Clean(target, [env.File(f) for f in get_file_list(str(source[0]), target[0].abspath, True, True)])
 
     api = generate_trimmed_api(str(source[0]), profile_filepath)
-    files = [env.File(f) for f in _get_file_list(api, target[0].abspath, True, True)]
+    files = []
+    for f in _get_file_list(api, target[0].abspath, True, True):
+        file = env.File(f)
+        if profile_filepath:
+            env.Depends(file, profile_filepath)
+        files.append(file)
     env["godot_cpp_gen_dir"] = target[0].abspath
     return files, source
 
@@ -154,6 +161,7 @@ def scons_generate_bindings(target, source, env):
 
     _generate_bindings(
         api,
+        str(source[0]),
         env["generate_template_get_node"],
         "32" if "32" in env["arch"] else "64",
         env["precision"],
@@ -379,6 +387,8 @@ def options(opts, env):
 
 
 def generate(env):
+    env.scons_version = env._get_major_minor_revision(scons_raw_version)
+
     # Default num_jobs to local cpu count if not user specified.
     # SCons has a peculiarity where user-specified options won't be overridden
     # by SetOption, so we can rely on this to know if we should use our default.
@@ -466,8 +476,6 @@ def generate(env):
         # DEBUG_ENABLED enables debugging *features* and debug-only code, which is intended
         # to give *users* extra debugging information for their game development.
         env.Append(CPPDEFINES=["DEBUG_ENABLED"])
-        # In upstream Godot this is added in typedefs.h when DEBUG_ENABLED is set.
-        env.Append(CPPDEFINES=["DEBUG_METHODS_ENABLED"])
 
     if env.dev_build:
         # DEV_ENABLED enables *engine developer* code which should only be compiled for those
@@ -511,14 +519,21 @@ def generate(env):
         BUILDERS={
             "GodotCPPBindings": Builder(action=Action(scons_generate_bindings, "$GENCOMSTR"), emitter=scons_emit_files),
             "GodotCPPDocData": Builder(action=scons_generate_doc_source),
+            "GLSL_HEADER": Builder(
+                action=header_builders.build_raw_headers_action,
+                suffix="glsl.gen.h",
+            ),
         }
     )
     env.AddMethod(_godot_cpp, "GodotCPP")
 
 
 def _godot_cpp(env):
-    extension_dir = normalize_path(env.get("gdextension_dir", env.Dir("gdextension").abspath), env)
-    api_file = normalize_path(env.get("custom_api_file", env.File(extension_dir + "/extension_api.json").abspath), env)
+    extension_dir = normalize_path(env.get("gdextension_dir", default=env.Dir("gdextension").srcnode().abspath), env)
+    api_file = normalize_path(
+        env.get("custom_api_file", default=os.path.join(extension_dir, "extension_api.json")), env
+    )
+
     bindings = env.GodotCPPBindings(
         env.Dir("."),
         [
@@ -533,15 +548,22 @@ def _godot_cpp(env):
         env.NoCache(bindings)
 
     # Sources to compile
-    sources = []
-    add_sources(sources, "src", "cpp")
-    add_sources(sources, "src/classes", "cpp")
-    add_sources(sources, "src/core", "cpp")
-    add_sources(sources, "src/variant", "cpp")
-    sources.extend([f for f in bindings if str(f).endswith(".cpp")])
+    sources = [
+        *env.Glob("src/*.cpp"),
+        *env.Glob("src/classes/*.cpp"),
+        *env.Glob("src/core/*.cpp"),
+        *env.Glob("src/variant/*.cpp"),
+        *tuple(f for f in bindings if str(f).endswith(".cpp")),
+    ]
 
     # Includes
-    env.AppendUnique(CPPPATH=[env.Dir(d) for d in [extension_dir, "include", "gen/include"]])
+    env.AppendUnique(
+        CPPPATH=[
+            env.Dir(extension_dir),
+            env.Dir("include").srcnode(),
+            env.Dir("gen/include"),
+        ]
+    )
 
     library = None
     library_name = "libgodot-cpp" + env["suffix"] + env["LIBSUFFIX"]

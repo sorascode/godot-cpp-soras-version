@@ -3,8 +3,7 @@
  * This is free and unencumbered software released into the public domain.
  */
 
-#ifndef EXAMPLE_CLASS_H
-#define EXAMPLE_CLASS_H
+#pragma once
 
 // We don't need windows.h in this example plugin but many others do, and it can
 // lead to annoying situations due to the ton of macros it defines.
@@ -29,6 +28,8 @@
 #include <godot_cpp/core/gdvirtual.gen.inc>
 
 using namespace godot;
+
+class ExampleInternal;
 
 class ExampleRef : public RefCounted {
 	GDCLASS(ExampleRef, RefCounted);
@@ -59,7 +60,7 @@ class ExampleMin : public Control {
 	GDCLASS(ExampleMin, Control);
 
 protected:
-	static void _bind_methods(){};
+	static void _bind_methods() {}
 };
 
 class Example : public Control {
@@ -204,6 +205,8 @@ public:
 	String test_use_engine_singleton() const;
 
 	static String test_library_path();
+
+	Ref<RefCounted> test_get_internal_class() const;
 };
 
 VARIANT_ENUM_CAST(Example::Constants);
@@ -290,4 +293,12 @@ public:
 	String get_the_word() const;
 };
 
-#endif // EXAMPLE_CLASS_H
+class ExampleInternal : public RefCounted {
+	GDCLASS(ExampleInternal, RefCounted);
+
+protected:
+	static void _bind_methods();
+
+public:
+	int get_the_answer() const;
+};

@@ -22,19 +22,28 @@ Android platforms.
 
 .. _built-in support:https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-android
 
-There is further information and examples in the doc/cmake.rst file.
+There is further information and examples in the docs: https://docs.godotengine.org/en/latest/tutorials/scripting/cpp/build_system/cmake.html
 
 ]=======================================================================]
-function( android_options )
-    # Android Options
+
+#[============================[ Android Options ]============================]
+function(android_options)
+    #[[ Options from SCons
+
+    The options below are managed by CMake toolchain files, the docs have more information:
+    https://docs.godotengine.org/en/latest/tutorials/scripting/cpp/build_system/cmake.html
+
+    android_api_level : Target Android API level.
+        Default = 24
+
+    ANDROID_HOME : Path to your Android SDK installation.
+        Default = os.environ.get("ANDROID_HOME", os.environ.get("ANDROID_SDK_ROOT")
+    ]]
 endfunction()
 
-function( android_generate )
-    target_compile_definitions(${TARGET_NAME}
-            PUBLIC
-            ANDROID_ENABLED
-            UNIX_ENABLED
-    )
+#[===========================[ Target Generation ]===========================]
+function(android_generate)
+    target_compile_definitions(godot-cpp PUBLIC ANDROID_ENABLED UNIX_ENABLED)
 
     common_compiler_flags()
 endfunction()
