@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  variant_internal.cpp                                                  */
+/*  load_proc_address.inc                                                 */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,20 +28,14 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include <godot_cpp/variant/variant_internal.hpp>
+#pragma once
 
-#if GODOT_VERSION_MINOR >= 4
+#define ERR_PRINT_EARLY(m_msg) \
+	::godot::gdextension_interface::print_error(m_msg, FUNCTION_STR, __FILE__, __LINE__, false)
 
-namespace godot {
-
-GDExtensionVariantGetInternalPtrFunc VariantInternal::get_internal_func[Variant::VARIANT_MAX]{};
-
-void VariantInternal::init_bindings() {
-	for (int i = 1; i < Variant::VARIANT_MAX; i++) {
-		get_internal_func[i] = ::godot::gdextension_interface::variant_get_ptr_internal_getter((GDExtensionVariantType)i);
+#define LOAD_PROC_ADDRESS(m_name, m_type)                                               \
+	::godot::gdextension_interface::m_name = (m_type)p_get_proc_address(#m_name);                   \
+	if (!::godot::gdextension_interface::m_name) {                                                  \
+		ERR_PRINT_EARLY("Unable to load GDExtension interface function " #m_name "()"); \
+		return false;                                                                   \
 	}
-}
-
-} // namespace godot
-
-#endif // GODOT_VERSION_MINOR >= 4

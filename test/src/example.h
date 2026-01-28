@@ -19,10 +19,14 @@
 #include <godot_cpp/classes/input_event_key.hpp>
 #include <godot_cpp/classes/tile_map.hpp>
 #include <godot_cpp/classes/tile_set.hpp>
+#include <godot_cpp/classes/tween.hpp>
 #include <godot_cpp/classes/viewport.hpp>
-#include <godot_cpp/variant/typed_dictionary.hpp>
 #include <godot_cpp/variant/variant.hpp>
 #include <godot_cpp/variant/variant_internal.hpp>
+
+#if GODOT_VERSION_MINOR >= 4
+#include <godot_cpp/variant/typed_dictionary.hpp>
+#endif // GODOT_VERSION_MINOR >= 4
 
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/core/gdvirtual.gen.inc>
@@ -107,6 +111,8 @@ public:
 	Example();
 	~Example();
 
+	Dictionary get_godot_target_version() const;
+
 	// Functions.
 	void simple_func();
 	void simple_const_func() const;
@@ -132,8 +138,12 @@ public:
 	int test_tarray_arg(const TypedArray<int64_t> &p_array);
 	TypedArray<Vector2> test_tarray() const;
 	Dictionary test_dictionary() const;
+
+#if GODOT_VERSION_MINOR >= 4
 	int test_tdictionary_arg(const TypedDictionary<String, int64_t> &p_dictionary);
 	TypedDictionary<Vector2, Vector2i> test_tdictionary() const;
+#endif // GODOT_VERSION_MINOR >= 4
+
 	Example *test_node_argument(Example *p_node) const;
 	String test_string_ops() const;
 	String test_str_utility() const;
@@ -154,6 +164,7 @@ public:
 
 	void test_add_child(Node *p_node);
 	void test_set_tileset(TileMap *p_tilemap, const Ref<TileSet> &p_tileset) const;
+	bool test_tween_smoke_test();
 
 	Variant test_variant_call(Variant p_variant);
 
