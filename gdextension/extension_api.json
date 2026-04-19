@@ -2,10 +2,10 @@
 	"header": {
 		"version_major": 4,
 		"version_minor": 6,
-		"version_patch": 1,
+		"version_patch": 2,
 		"version_status": "stable",
 		"version_build": "custom_build",
-		"version_full_name": "Godot Engine v4.6.1.stable.custom_build",
+		"version_full_name": "Godot Engine v4.6.2.stable.custom_build",
 		"precision": "single"
 	},
 	"builtin_class_sizes": [
@@ -105279,10 +105279,13 @@
 					"name": "_commit",
 					"is_const": false,
 					"is_static": false,
-					"is_required": true,
+					"is_required": false,
 					"is_vararg": false,
 					"is_virtual": true,
 					"hash": 2678287736,
+					"hash_compatibility": [
+						83702148
+					],
 					"arguments": [
 						{
 							"name": "msg",
@@ -105293,6 +105296,18 @@
 							"type": "bool"
 						}
 					]
+				},
+				{
+					"name": "_allow_amends",
+					"is_const": false,
+					"is_static": false,
+					"is_required": false,
+					"is_vararg": false,
+					"is_virtual": true,
+					"hash": 2240911060,
+					"return_value": {
+						"type": "bool"
+					}
 				},
 				{
 					"name": "_get_diff",
@@ -142974,6 +142989,11 @@
 					"is_virtual": false,
 					"hash": 3218959716
 				}
+			],
+			"signals": [
+				{
+					"name": "project_settings_loaded"
+				}
 			]
 		},
 		{
@@ -160062,6 +160082,18 @@
 							"type": "String"
 						}
 					]
+				},
+				{
+					"name": "_get_supported_extensions",
+					"is_const": true,
+					"is_static": false,
+					"is_required": true,
+					"is_vararg": false,
+					"is_virtual": true,
+					"hash": 2961356807,
+					"return_value": {
+						"type": "PackedStringArray"
+					}
 				},
 				{
 					"name": "_write_begin",
@@ -298353,6 +298385,28 @@
 					]
 				},
 				{
+					"name": "shaped_get_run_glyph_range",
+					"is_const": true,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 3269669806,
+					"return_value": {
+						"type": "Vector2i"
+					},
+					"arguments": [
+						{
+							"name": "shaped",
+							"type": "RID"
+						},
+						{
+							"name": "index",
+							"type": "int",
+							"meta": "int64"
+						}
+					]
+				},
+				{
 					"name": "shaped_get_run_font_rid",
 					"is_const": true,
 					"is_vararg": false,
@@ -303516,6 +303570,29 @@
 				},
 				{
 					"name": "_shaped_get_run_range",
+					"is_const": true,
+					"is_static": false,
+					"is_required": false,
+					"is_vararg": false,
+					"is_virtual": true,
+					"hash": 3269669806,
+					"return_value": {
+						"type": "Vector2i"
+					},
+					"arguments": [
+						{
+							"name": "shaped",
+							"type": "RID"
+						},
+						{
+							"name": "index",
+							"type": "int",
+							"meta": "int64"
+						}
+					]
+				},
+				{
+					"name": "_shaped_get_run_glyph_range",
 					"is_const": true,
 					"is_static": false,
 					"is_required": false,
