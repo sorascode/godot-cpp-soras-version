@@ -459,6 +459,9 @@ def generate_gdextension_interface_loader_source(data):
 
         for func in data[version]:
             name = func["name"]
+            if name == "print_error":
+                # We manually load "print_error" early, so don't load it again here.
+                continue
             fn = gdextension_interface_type_name(name)
 
             if "deprecated" in func:
@@ -768,7 +771,10 @@ def generate_builtin_class_header(builtin_api, size, used_classes, fully_used_cl
 
     result.append(f"class {class_name} {{")
     result.append(f"\tstatic constexpr size_t {snake_class_name}_SIZE = {size};")
-    result.append(f"\tuint8_t opaque[{snake_class_name}_SIZE] = {{}};")
+    # We don't get alignment information from the JSON so we have to guess.
+    # This logic should be correct for all built-in types as they exist right now.
+    alignment = 8 if size >= 8 else 4
+    result.append(f"\talignas({alignment}) uint8_t opaque[{snake_class_name}_SIZE] = {{}};")
 
     result.append("")
     result.append("\tfriend class Variant;")
@@ -1676,6 +1682,8 @@ def generate_engine_classes_bindings(api, output_dir, use_template_get_node):
         used_classes = list(used_classes)
         used_classes.sort()
         fully_used_classes = list(fully_used_classes)
+        if class_api["name"] == "RefCounted":
+            fully_used_classes.remove("Ref")  # Special case; Ref should include RefCounted but not vice versa.
         fully_used_classes.sort()
 
         with header_filename.open("w+", encoding="utf-8") as header_file:
@@ -1831,7 +1839,13 @@ def generate_engine_class_header(class_api, used_classes, fully_used_classes, us
         for value in class_api["constants"]:
             if "type" not in value:
                 value["type"] = "int"
-            result.append(f"\tstatic const {value['type']} {value['name']} = {value['value']};")
+            const_value = value["value"]
+            if value["type"] == "int" and const_value == -2147483648:
+                # -2147483648 is a valid value for int, but MSVC doesn't read the whole thing as a literal,
+                # instead it sees 2147483648 (which is too big for an an int) and then applies the unary minus.
+                # This is a workaround for that.
+                const_value = "-2147483647 - 1"
+            result.append(f"\tstatic const {value['type']} {value['name']} = {const_value};")
         result.append("")
 
     if is_singleton:
@@ -2259,8 +2273,24 @@ def generate_global_constants(api, output_dir):
     header.append("namespace godot {")
     header.append("")
 
-    if len(api["global_constants"]) > 0:
-        for constant in api["global_constants"]:
+    # Remove integer limit global constants that overlap with those defined in cstdint
+    limit_constants = {
+        "UINT8_MAX",
+        "UINT16_MAX",
+        "UINT32_MAX",
+        "INT8_MIN",
+        "INT8_MAX",
+        "INT16_MIN",
+        "INT16_MAX",
+        "INT32_MIN",
+        "INT32_MAX",
+        "INT64_MIN",
+        "INT64_MAX",
+    }
+    global_constants = [c for c in api["global_constants"] if c["name"] not in limit_constants]
+
+    if len(global_constants) > 0:
+        for constant in global_constants:
             header.append(f"const int64_t {escape_identifier(constant['name'])} = {constant['value']};")
 
         header.append("")

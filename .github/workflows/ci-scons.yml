@@ -29,7 +29,18 @@ jobs:
             artifact-name: godot-cpp-linux-glibc2.27-x86_64-release
             artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
             run-tests: true
+            api-version: 4.7
             cache-name: linux-x86_64
+
+          - name: 🐧 Linux (GCC) for Godot 4.6
+            os: ubuntu-22.04
+            platform: linux
+            artifact-name: godot-cpp-linux-glibc2.27-x86_64-release-godot46
+            artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
+            run-tests: true
+            api-version: 4.6
+            godot-test-versions: "4.6-stable"
+            cache-name: linux-x86_64-godot45
 
           - name: 🐧 Linux (GCC) for Godot 4.5
             os: ubuntu-22.04
@@ -38,7 +49,7 @@ jobs:
             artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
             run-tests: true
             api-version: 4.5
-            godot-test-versions: "4.5-stable"
+            godot-test-versions: "4.5-stable 4.6-stable"
             cache-name: linux-x86_64-godot45
 
           - name: 🐧 Linux (GCC) for Godot 4.4
@@ -48,7 +59,7 @@ jobs:
             artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
             run-tests: true
             api-version: 4.4
-            godot-test-versions: "4.4-stable 4.5-stable"
+            godot-test-versions: "4.4-stable 4.5-stable 4.6-stable"
             cache-name: linux-x86_64-godot44
 
           - name: 🐧 Linux (GCC) for Godot 4.3
@@ -58,7 +69,7 @@ jobs:
             artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
             run-tests: true
             api-version: 4.3
-            godot-test-versions: "4.3-stable 4.4-stable 4.5-stable"
+            godot-test-versions: "4.3-stable 4.4-stable 4.5-stable 4.6-stable"
             cache-name: linux-x86_64-godot43
 
           - name: 🏁 Windows (x86_64, MSVC)

@@ -176,7 +176,10 @@ def scons_generate_bindings(target, source, env):
     return None
 
 
-supported_api_versions = ["4.3", "4.4", "4.5", "4.6"]
+supported_api_versions = ["4.3", "4.4", "4.5", "4.6", "4.7"]
+
+# We default to the latest stable Godot version.
+default_api_version = "4.7"
 
 platforms = ["linux", "macos", "windows", "android", "ios", "web"]
 
@@ -356,7 +359,7 @@ def options(opts, env):
         BoolVariable(
             key="use_hot_reload",
             help="Enable the extra accounting required to support hot reload.",
-            default=env.get("use_hot_reload", None),
+            default=env.get("use_hot_reload", False),
         )
     )
 
@@ -451,7 +454,7 @@ def generate(env):
     print("Building for architecture " + env["arch"] + " on platform " + env["platform"])
 
     # These defaults may be needed by platform tools
-    env.use_hot_reload = env.get("use_hot_reload", env["target"] != "template_release")
+    env.use_hot_reload = env["use_hot_reload"]
     env.editor_build = env["target"] == "editor"
     env.dev_build = env["dev_build"]
     env.debug_features = env["target"] in ["editor", "template_debug"]
@@ -549,7 +552,7 @@ def generate(env):
 
 
 def _get_api_file(extension_dir, api_version):
-    if api_version is None or api_version == supported_api_versions[-1]:
+    if api_version is None or api_version == default_api_version:
         return os.path.join(extension_dir, "extension_api.json")
 
     filename = "extension_api-%s.json" % api_version.replace(".", "-")

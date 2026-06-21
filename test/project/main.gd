@@ -44,6 +44,7 @@ func _ready():
 	# Pass custom reference.
 	assert_equal(example.custom_ref_func(null), -1)
 	var ref1 = ExampleRef.new()
+	assert_equal(ref1.get_reference_count(), 1)
 	ref1.id = 27
 	assert_equal(example.custom_ref_func(ref1), 27)
 	ref1.id += 1;
@@ -63,6 +64,7 @@ func _ready():
 	assert_equal(null_ref, null)
 	var ret_ref = example.return_extended_ref()
 	assert_not_equal(ret_ref.get_instance_id(), 0)
+	assert_equal(ret_ref.get_reference_count(), 1)
 	assert_equal(ret_ref.get_id(), 0)
 	assert_equal(example.get_v4(), Vector4(1.2, 3.4, 5.6, 7.8))
 	assert_equal(example.test_node_argument(example), example)

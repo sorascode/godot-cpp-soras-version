@@ -20,11 +20,7 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v45
 
-      - name: Style checks via pre-commit
-        uses: pre-commit/action@v3.0.1
+      - name: Style checks via prek
+        uses: j178/prek-action@v2
         with:
-          extra_args: --verbose --hook-stage manual --files ${{ steps.changed-files.outputs.all_changed_files }}
-
-      - name: Check generated files consistency
-        run:
-          python misc/scripts/check_get_file_list.py
+          extra-args: --verbose --hook-stage manual --files ${{ steps.changed-files.outputs.all_changed_files }}

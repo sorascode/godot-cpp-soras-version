@@ -81,7 +81,9 @@ Wrapped::Wrapped(const StringName &p_godot_class) {
 	} else
 #endif
 	{
-#if GODOT_VERSION_MINOR >= 4
+#if GODOT_VERSION_MINOR >= 7
+		_owner = ::godot::gdextension_interface::classdb_construct_object3(reinterpret_cast<GDExtensionConstStringNamePtr>(p_godot_class._native_ptr()));
+#elif GODOT_VERSION_MINOR >= 4
 		_owner = ::godot::gdextension_interface::classdb_construct_object2(reinterpret_cast<GDExtensionConstStringNamePtr>(p_godot_class._native_ptr()));
 #else
 		_owner = ::godot::gdextension_interface::classdb_construct_object(reinterpret_cast<GDExtensionConstStringNamePtr>(p_godot_class._native_ptr()));

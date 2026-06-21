@@ -124,7 +124,7 @@ public:
 	Viewport *return_something_const() const;
 	Ref<ExampleRef> return_ref() const;
 	Ref<ExampleRef> return_empty_ref() const;
-	ExampleRef *return_extended_ref() const;
+	Ref<ExampleRef> return_extended_ref() const;
 	Ref<ExampleRef> extended_ref_checks(Ref<ExampleRef> p_ref) const;
 	Variant varargs_func(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error);
 	int varargs_func_nv(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error);

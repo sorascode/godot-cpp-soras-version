@@ -64,6 +64,20 @@ function(godot_arch_name OUTVAR)
         endif()
     endif()
 
+    # Special case for MSVC cross-compilation
+    if(DEFINED CMAKE_VS_PLATFORM_NAME)
+        if(CMAKE_VS_PLATFORM_NAME STREQUAL "Win32")
+            set(${OUTVAR} "x86_32" PARENT_SCOPE)
+            return()
+        elseif(CMAKE_VS_PLATFORM_NAME STREQUAL "x64")
+            set(${OUTVAR} "x86_64" PARENT_SCOPE)
+            return()
+        elseif(CMAKE_VS_PLATFORM_NAME STREQUAL "ARM64")
+            set(${OUTVAR} "arm64" PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+
     # Direct match early out.
     string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" ARCH)
     if(ARCH IN_LIST ARCH_LIST)
@@ -315,7 +329,7 @@ function(godotcpp_generate)
     godot_arch_name( ARCH_NAME )
 
     # Transform options into generator expressions
-    set(HOT_RELOAD-UNSET "$<STREQUAL:${GODOTCPP_USE_HOT_RELOAD},>")
+    set(HOT_RELOAD "$<BOOL:${GODOTCPP_USE_HOT_RELOAD}>")
 
     set(DISABLE_EXCEPTIONS "$<BOOL:${GODOTCPP_DISABLE_EXCEPTIONS}>")
 
@@ -337,7 +351,6 @@ function(godotcpp_generate)
     ### Define our godot-cpp library targets
     # Generator Expressions that rely on the target
     set(DEBUG_FEATURES "$<NOT:$<STREQUAL:${GODOTCPP_TARGET},template_release>>")
-    set(HOT_RELOAD "$<IF:${HOT_RELOAD-UNSET},${DEBUG_FEATURES},$<BOOL:${GODOTCPP_USE_HOT_RELOAD}>>")
 
     # Suffix Generator Expression
     string(
@@ -365,13 +378,16 @@ function(godotcpp_generate)
     add_library(godot::cpp ALIAS godot-cpp)
 
     file(GLOB_RECURSE GODOTCPP_SOURCES LIST_DIRECTORIES NO CONFIGURE_DEPENDS src/*.cpp)
+    set(GODOTCPP_NATVIS_FILES natvis/godot-cpp.natvis)
 
-    target_sources(godot-cpp PRIVATE ${GODOTCPP_SOURCES} ${GENERATED_FILES_LIST})
+    target_sources(godot-cpp PRIVATE ${GODOTCPP_SOURCES} ${GENERATED_FILES_LIST} ${GODOTCPP_NATVIS_FILES})
 
     target_include_directories(
         godot-cpp
         ${GODOTCPP_SYSTEM_HEADERS_ATTRIBUTE}
-        PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/gen/include
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/gen/include>
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     )
 
     # gersemi: off

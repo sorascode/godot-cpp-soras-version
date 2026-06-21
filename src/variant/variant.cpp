@@ -548,6 +548,9 @@ Variant::operator PackedVector4Array() const {
 
 Object *Variant::get_validated_object() const {
 #if GODOT_VERSION_MINOR >= 4
+	if (get_type() != OBJECT) {
+		return nullptr;
+	}
 	return ObjectDB::get_instance(operator ObjectID());
 #else
 	// Note: This isn't actually validated, but we can't do any better in Godot 4.3 or earlier.
@@ -556,6 +559,10 @@ Object *Variant::get_validated_object() const {
 }
 
 Variant &Variant::operator=(const Variant &other) {
+	if (unlikely(this == &other)) {
+		return *this;
+	}
+
 	clear();
 	::godot::gdextension_interface::variant_new_copy(_native_ptr(), other._native_ptr());
 	return *this;
@@ -767,6 +774,12 @@ String Variant::get_type_name(Variant::Type type) {
 	::godot::gdextension_interface::variant_get_type_name(static_cast<GDExtensionVariantType>(type), result._native_ptr());
 	return result;
 }
+
+#if GODOT_VERSION_MINOR >= 7
+Variant::Type Variant::get_type_by_name(const String &p_name) {
+	return static_cast<Variant::Type>(::godot::gdextension_interface::variant_get_type_by_name(p_name._native_ptr()));
+}
+#endif
 
 bool Variant::can_convert(Variant::Type from, Variant::Type to) {
 	GDExtensionBool can = ::godot::gdextension_interface::variant_can_convert(static_cast<GDExtensionVariantType>(from), static_cast<GDExtensionVariantType>(to));
