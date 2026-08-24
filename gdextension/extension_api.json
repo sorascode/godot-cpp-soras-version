@@ -2,10 +2,10 @@
 	"header": {
 		"version_major": 4,
 		"version_minor": 7,
-		"version_patch": 0,
+		"version_patch": 2,
 		"version_status": "stable",
 		"version_build": "custom_build",
-		"version_full_name": "Godot Engine v4.7.stable.custom_build",
+		"version_full_name": "Godot Engine v4.7.2.stable.custom_build",
 		"precision": "single"
 	},
 	"builtin_class_sizes": [
@@ -72678,7 +72678,7 @@
 					"is_required": false,
 					"is_vararg": false,
 					"is_virtual": true,
-					"hash": 1785288718,
+					"hash": 3221040361,
 					"arguments": [
 						{
 							"name": "move_dir",
@@ -72696,6 +72696,10 @@
 						},
 						{
 							"name": "collided_with",
+							"type": "Node2D"
+						},
+						{
+							"name": "collided_with_rid",
 							"type": "RID"
 						},
 						{
@@ -72773,7 +72777,7 @@
 					"is_vararg": false,
 					"is_static": false,
 					"is_virtual": false,
-					"hash": 1785288718,
+					"hash": 3221040361,
 					"arguments": [
 						{
 							"name": "move_dir",
@@ -72791,6 +72795,10 @@
 						},
 						{
 							"name": "collided_with",
+							"type": "Node2D"
+						},
+						{
+							"name": "collided_with_rid",
 							"type": "RID"
 						},
 						{
@@ -178236,6 +178244,31 @@
 					}
 				},
 				{
+					"name": "set_editor_visible",
+					"is_const": false,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 2586408642,
+					"arguments": [
+						{
+							"name": "editor_visible",
+							"type": "bool"
+						}
+					]
+				},
+				{
+					"name": "is_editor_visible",
+					"is_const": true,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 36873697,
+					"return_value": {
+						"type": "bool"
+					}
+				},
+				{
 					"name": "set_navigation_map",
 					"is_const": false,
 					"is_vararg": false,
@@ -178472,6 +178505,12 @@
 					"name": "enabled",
 					"setter": "set_enabled",
 					"getter": "is_enabled"
+				},
+				{
+					"type": "bool",
+					"name": "editor_visible",
+					"setter": "set_editor_visible",
+					"getter": "is_editor_visible"
 				},
 				{
 					"type": "bool",
@@ -284489,6 +284528,31 @@
 					}
 				},
 				{
+					"name": "set_static_body",
+					"is_const": false,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 2586408642,
+					"arguments": [
+						{
+							"name": "enabled",
+							"type": "bool"
+						}
+					]
+				},
+				{
+					"name": "is_static_body",
+					"is_const": true,
+					"is_vararg": false,
+					"is_static": false,
+					"is_virtual": false,
+					"hash": 36873697,
+					"return_value": {
+						"type": "bool"
+					}
+				},
+				{
 					"name": "set_transfer_speed",
 					"is_const": false,
 					"is_vararg": false,
@@ -284556,6 +284620,12 @@
 					"name": "safe",
 					"setter": "set_safe",
 					"getter": "is_safe"
+				},
+				{
+					"type": "bool",
+					"name": "static_body",
+					"setter": "set_static_body",
+					"getter": "is_static_body"
 				},
 				{
 					"type": "Vector2",
